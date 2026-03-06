@@ -10,7 +10,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "description": "CLI to analyze local code repositories and generate REPORT.md",
   "type": "module",
   "bin": {
