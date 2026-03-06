@@ -19,19 +19,26 @@ npm run dev -- analyze .
 ## Command
 
 ```bash
-repolens analyze [path-or-github-url]
+repolens analyze [path-or-github-url] [options]
 ```
+
+Options:
+- `-f, --format <format>`: `md | txt | json | docx | pdf` (default: `md`)
+- `-s, --with-sources`: include primary source snippets in report
 
 Examples:
 
 ```bash
 repolens analyze .
-repolens analyze /Users/you/project
-repolens analyze https://github.com/owner/repo
+repolens analyze . --format json
+repolens analyze https://github.com/owner/repo --format md --with-sources
+repolens analyze https://github.com/owner/repo --format docx
 ```
 
 - Default target: current folder
-- Output: `./REPORT.md` (in the directory where you run the command)
+- Output path: current directory (e.g. `./REPORT.md`, `./REPORT.pdf`)
+
+> Note: `docx/pdf` conversion requires `pandoc` installed (`brew install pandoc`).
 
 ## Notes
 

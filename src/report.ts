@@ -152,14 +152,71 @@ async function resolveTargetToLocalPath(target: string): Promise<{ repoPath: str
   };
 }
 
-export async function analyzeRepo(target: string): Promise<string> {
+export type OutputFormat = 'md' | 'txt' | 'json' | 'docx' | 'pdf';
+
+export type AnalyzeOptions = {
+  format?: OutputFormat;
+  withSources?: boolean;
+};
+
+function withPrimarySources(report: string, s: Summary): string {
+  const appendix = s.snippets
+    .slice(0, 8)
+    .map((snip, i) => `### Source ${i + 1}: ${snip.file}\n\n\`\`\`\n${snip.content}\n\`\`\``)
+    .join('\n\n');
+  return `${report}\n\n---\n\n## Primary Source Snippets\n\n${appendix}`;
+}
+
+async function writeByFormat(baseName: string, report: string, summary: Summary, format: OutputFormat): Promise<string> {
+  const cwd = process.cwd();
+  const mdPath = path.join(cwd, `${baseName}.md`);
+
+  if (format === 'md') {
+    await fs.writeFile(mdPath, report, 'utf8');
+    return mdPath;
+  }
+
+  if (format === 'txt') {
+    const txtPath = path.join(cwd, `${baseName}.txt`);
+    await fs.writeFile(txtPath, report, 'utf8');
+    return txtPath;
+  }
+
+  if (format === 'json') {
+    const jsonPath = path.join(cwd, `${baseName}.json`);
+    await fs.writeFile(jsonPath, JSON.stringify({ summary, report }, null, 2), 'utf8');
+    return jsonPath;
+  }
+
+  // For docx/pdf, rely on pandoc if installed.
+  await fs.writeFile(mdPath, report, 'utf8');
+  try {
+    await exec('pandoc --version');
+  } catch {
+    throw new Error('docx/pdf output requires pandoc. Install: brew install pandoc');
+  }
+
+  if (format === 'docx') {
+    const out = path.join(cwd, `${baseName}.docx`);
+    await exec(`pandoc "${mdPath}" -o "${out}"`);
+    return out;
+  }
+
+  const out = path.join(cwd, `${baseName}.pdf`);
+  await exec(`pandoc "${mdPath}" -o "${out}"`);
+  return out;
+}
+
+export async function analyzeRepo(target: string, options: AnalyzeOptions = {}): Promise<string> {
+  const format = (options.format || 'md') as OutputFormat;
+  const withSources = !!options.withSources;
+
   const { repoPath, cleanup } = await resolveTargetToLocalPath(target);
   try {
     const summary = await collectSummary(repoPath);
-    const report = await aiReport(summary);
-    const outPath = path.join(process.cwd(), 'REPORT.md');
-    await fs.writeFile(outPath, report, 'utf8');
-    return outPath;
+    let report = await aiReport(summary);
+    if (withSources) report = withPrimarySources(report, summary);
+    return await writeByFormat('REPORT', report, summary, format);
   } finally {
     if (cleanup) await cleanup();
   }
