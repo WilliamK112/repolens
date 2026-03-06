@@ -37,6 +37,26 @@ RepoLens generates structured sections such as:
 
 ---
 
+## 📂 Project Structure
+
+```txt
+.
+├── App.tsx
+├── components/
+│   ├── CharacterCreation.tsx
+│   ├── CoverPage.tsx
+│   ├── GameDisplay.tsx
+│   ├── MusicPlayer.tsx
+│   └── VideoPlanModal.tsx
+├── services/
+│   └── geminiService.ts
+├── constants.ts
+├── types.ts
+└── HANDBOOK.md
+```
+
+---
+
 ## Install
 
 ### Option A — Global install (fastest)
