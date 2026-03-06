@@ -301,7 +301,12 @@ ${arch.map((x) => `- ${x}`).join('\n')}
 ## 6) Risks & Mitigations (project-specific)
 ${risks.map((r) => `- ${r}`).join('\n')}
 
-## 7) Action Plan
+## 7) Security, Privacy & Cost
+- API key exposure risk if secrets are client-visible; prefer server-side proxy or controlled env injection ${src('services/*', 'API key usage')}
+- GenAI/video operations can introduce variable runtime cost; add request budgeting and retry limits ${src('service/model call paths')}
+- User-generated content and logs should follow minimal-retention handling ${src('app state + log handling')}
+
+## 8) Action Plan
 ### Quick Wins (1–2 hours)
 ${plan.quick.map((x) => `- ${x}`).join('\n')}
 
@@ -311,8 +316,9 @@ ${plan.next.map((x) => `- ${x}`).join('\n') || '- No medium-horizon items auto-d
 ### Hard (1–2 weeks)
 ${plan.hard.map((x) => `- ${x}`).join('\n')}
 
-## 8) Interview Pitch (30s)
-"${interviewPitch(s)}"
+## 9) Interview Pitch (30s)
+- EN: "${interviewPitch(s)}"
+- 中文: "我做了 ${s.repoName}，把‘选择→状态推进→AI生成→媒体展示’做成可运行闭环，并针对模型波动与生成失败加入可恢复的体验设计。"
 `;
 }
 

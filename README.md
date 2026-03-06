@@ -42,5 +42,6 @@ repolens analyze https://github.com/owner/repo --format docx
 
 ## Notes
 
-- If `GEMINI_API_KEY` is set, RepoLens generates AI-enhanced analysis.
-- If no API key (or API fails), it generates a deterministic fallback report.
+- RepoLens now generates a deterministic, evidence-linked report by default.
+- Use `--with-sources` to append an evidence appendix with primary snippets.
+- A rule/detector template is included at `repolens.rules.template.json` to help you define project fingerprints, flags, and report block selection for specialized project types (e.g., React+Vite+Gemini media apps).

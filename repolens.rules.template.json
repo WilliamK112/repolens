@@ -1,0 +1,78 @@
+{
+  "profiles": [
+    {
+      "id": "react_vite_spa_gemini_story_media",
+      "match": {
+        "all": [
+          { "fileExists": "index.tsx" },
+          { "fileExists": "App.tsx" },
+          { "dirExists": "components" },
+          { "dirExists": "services" },
+          { "fileExists": "services/geminiService.ts" },
+          { "packageJsonDepsAny": ["react", "react-dom"] },
+          { "packageJsonScriptsHas": ["dev", "build", "preview"] }
+        ],
+        "any": [
+          { "packageJsonDepsAny": ["@google/genai"] },
+          { "fileContainsAny": { "path": "services/geminiService.ts", "needles": ["@google/genai", "generateVideos", "generateImage"] } }
+        ]
+      },
+      "flags": {
+        "project_type": "React + Vite SPA",
+        "ai_core": "Gemini SDK",
+        "ai_narrative_engine": true,
+        "ai_image_generation": true,
+        "ai_video_generation": true,
+        "in_app_video_playback": true,
+        "embedded_bgm_audio": true,
+        "turn_based_branching_gameplay": true
+      },
+      "evidence_map": {
+        "runtime_build": ["package.json:scripts"],
+        "ai_pipeline": ["services/geminiService.ts"],
+        "gameplay_engine": ["App.tsx", "types.ts", "constants.ts"],
+        "media_ux": ["components/GameDisplay.tsx", "components/MusicPlayer.tsx", "components/VideoPlanModal.tsx"],
+        "docs": ["HANDBOOK.md", "README.md"]
+      },
+      "report_blocks": [
+        "ProjectFingerprint",
+        "RunAndBuildRealityCheck",
+        "GameplayEngine",
+        "AIPipeline",
+        "MediaUX",
+        "ReliabilityAndFailureHandling",
+        "SecurityPrivacyAndCost",
+        "ActionPlan",
+        "InterviewPitch"
+      ]
+    }
+  ],
+  "detectors": {
+    "turn_based_branching_gameplay": {
+      "any": [
+        { "fileContainsAny": { "path": "App.tsx", "needles": ["GameState", "currentPlayerIndex", "choices", "log"] } },
+        { "fileContainsAny": { "path": "types.ts", "needles": ["GameState", "Choice", "Player"] } }
+      ]
+    },
+    "in_app_video_playback": {
+      "any": [
+        { "fileContainsAny": { "path": "components/GameDisplay.tsx", "needles": ["<video", "sceneVideoUrl"] } }
+      ]
+    },
+    "embedded_bgm_audio": {
+      "any": [
+        { "fileContainsAny": { "path": "components/MusicPlayer.tsx", "needles": ["data:audio", "base64"] } }
+      ]
+    },
+    "ai_video_generation": {
+      "any": [
+        { "fileContainsAny": { "path": "services/geminiService.ts", "needles": ["generateVideos", "models.generateVideos", "veo"] } }
+      ]
+    },
+    "ai_resilience_handling": {
+      "any": [
+        { "fileContainsAny": { "path": "services/geminiService.ts", "needles": ["PERMISSION_DENIED", "RESOURCE_EXHAUSTED", "parseGeminiError"] } }
+      ]
+    }
+  }
+}
